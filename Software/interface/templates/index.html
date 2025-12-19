@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Configuration Wi-Fi Raspberry Pi</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
+        <nav>
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            <ul class="nav-menu">
+                <li class="active"><a href="/" class="nav-link">Accueil</a></li>
+                <li><a href="/mode" class="nav-link">Mode de connexion</a></li>
+                <li><a href="/config_app" class="nav-link">Configurations</a></li>
+                <li><a href="/new_session" class="nav-link">Création de session</a></li>
+                <li><a href="/liste_session" class="nav-link">Liste sessions</a></li>
+                <li><a href="/date" class="nav-link">Date</a></li>
+                <li><a href="/filebrowser" class="nav-link">Drive</a></li>
+                <li><a href="/espace_disk" class="nav-link">Stockage</a></li>
+                <li><a href="/video" class="nav-link">Video</a></li>
+            </ul>
+        </nav>
+        <main>
+            <section>
+                <div class="container">
+                    <p>La création de ce dispositif a été financée par le projet ANR BISES (ANR-19-CE32-0012).</p>
+                </div>
+            </section>
+            <section>
+                <div class="container">
+                    <h2>Mode d'emploi</h2>
+                    <p>Suivez ces étapes pour démarrer en toute simplicité.</p>
+                    <div>
+                        <div class="step">
+                            <h3>1. Date</h3>
+                            <p>La date est importante pour le bon fonctionnement du CamTrap. Elle permet de dater les photos et vidéos prises par l'appareil.</p>
+                            <p class="notes warning">&#9888; Pensez à vérifier régulièrement l'heure du CamTrap.</p>
+                        </div>
+                        <div class="step">
+                            <h3>2. Configurations</h3>
+                            <p>Accédez aux configurations pour régler :</p>
+                            <ul>
+                                <li>Les paramètres de la caméra (qualité d'image, résolution).</li>
+                                <li>La détection de mouvement (sensibilité).</li>
+                                <li>La luminosité en fonction de l'environnement.</li>
+                            </ul>
+                            <p class="notes info"> Ces paramètres influencent directement la qualité des enregistrements.</p>
+                        </div>
+                        <div class="step">
+                            <h3>3. Création de session</h3>
+                            <p>Créez des sessions pour organiser vos observations. Lors de la création, configurez :</p>
+                            <ul>
+                                <li><strong>Nom de la session :</strong> Identifiez chaque session avec un nom unique.</li>
+                                <li><strong>Mode d’enregistrement :</strong> Continu ou basé sur des plages horaires.</li>
+                                <li><strong>Métadonnées :</strong> Ajoutez des informations importantes comme le nom du site, la localisation ou des détails spécifiques à la zone observée.</li>
+                            </ul>
+                            <p class="notes info"> Le nom de la session est importante pour les captures.</p>
+                        </div>
+                        <div class="step">
+                            <h3>4. Liste des sessions</h3>
+                            <p>Gérez vos différentes sessions :</p>
+                            <ul>
+                                <li>Démarrez ou arrêtez une session.</li>
+                                <li>Supprimez une session</li>
+                            </ul>
+                            <p class="notes danger">&#9888; Attention, la suppression d'une session est définitive. Elle entraine la suppression du dossier (photos, logs et les métadonnée de la session)</p>
+                        </div>
+                        <div class="step">
+                            <h3>5. Drive</h3>
+                            <p>Le CamTrap offre un accès à un espace de stockage :</p>
+                            <ol>
+                                <li>Lancez l'outil Filebrowser.</li>
+                                <li>Ouvrez-le dans un nouvel onglet pour accéder aux dossiers.</li>
+                            </ol>
+                            <p>Structure des dossiers :</p>
+                            <ul class="tree">
+                                <li>session1/</li>
+                                <ul>
+                                    <li>session1.json</li>
+                                    <li>logs.json</li>
+                                    <li>images/</li>
+                                </ul>
+                                <li>session2/</li>
+                                <ul>
+                                    <li>session2.json</li>
+                                </ul>
+                            </ul>     
+                            <p class="notes info">Dans le schéma, session1 est une session qui a déjà été lancée, alors que session2 a juste été créée.</p>
+                        </div>
+                        <div class="step">
+                            <h3>6. Stockage</h3>
+                            <p>Vous pouvez voir l'espace disque restant sur le CamTrap.</p>
+                        </div>
+                        <div class="step">
+                            <h3>7. Mode de Connexion</h3>
+                            <p>Changez le mode de connexion selon vos besoins :</p>
+                            <ul>
+                                <li><strong>Mode Point d’Accès :</strong> Si aucun réseau wifi n'est disponible.</li>
+                                <li><strong>Mode Wi-Fi :</strong> </li>
+                            </ul>
+                            <p class="notes info">Assurez-vous que le CamTrap est connecté au même réseau que votre ordinateur.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <div id="loader">
+            <div class="spinner"></div>
+        </div>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
+</html>

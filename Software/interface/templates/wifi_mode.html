@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mode Wi-Fi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            <ul class="nav-menu">
+            <li><a href="/" class="nav-link">Accueil</a></li>
+            <li class="active"><a href="/mode" class="nav-link">Mode de connexion</a></li>
+            <li><a href="/config_app" class="nav-link">Configurations</a></li>
+            <li><a href="/new_session" class="nav-link">Création de session</a></li>
+            <li><a href="/liste_session" class="nav-link">Liste sessions</a></li>
+            <li><a href="/date" class="nav-link">Date</a></li>
+            <li><a href="/filebrowser" class="nav-link">Drive</a></li>
+            <li><a href="/espace_disk" class="nav-link">Stockage</a></li>
+            <li><a href="/video" class="nav-link">Video</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section>
+            <div class="container">
+                <div class="display-wifi">
+                    <p> Vous êtes actuelement connecté au réseau Wi-Fi : 
+                        <span>
+                            {{wifi_utilise}}
+                        </span>
+                    </p>
+                </div>      
+                <form action="/set_ap_mode">
+                    <button type="submit" id="apButton">Passer en mode AP</button>
+                </form>
+            </div>
+        </section>
+        <section>
+            <div id="modeMessage" class="container" style="display: none;"></div>
+        </section>
+    </main>
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

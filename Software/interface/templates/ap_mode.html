@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Configuration Wi-Fi Raspberry Pi</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
+        <nav>
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Accueil</a></li>
+                <li class="active"><a href="/mode" class="nav-link">Mode de connexion</a></li>
+                <li><a href="/config_app" class="nav-link">Configurations</a></li>
+                <li><a href="/new_session" class="nav-link">Création de session</a></li>
+                <li><a href="/liste_session" class="nav-link">Liste sessions</a></li>
+                <li><a href="/date" class="nav-link">Date</a></li>
+                <li><a href="/filebrowser" class="nav-link">Drive</a></li>
+                <li><a href="/espace_disk" class="nav-link">Stockage</a></li>
+                <li><a href="/video" class="nav-link">Video</a></li>
+            </ul>
+        </nav>
+        <main>
+            <section>
+                <div class="container">
+                    <h1>Mode Access Point (AP)</h1>
+                    <h3>Réseaux Wi-Fi déjà enregistrés mais non connectés :</h3>
+            
+                    {% if wifi_dispo %}
+                        <ul class="wifi-list">
+                            {% for wifi in wifi_dispo %}
+                                <li class="wifi-item">
+                                    <span>{{ wifi }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Aucun réseau Wi-Fi non connecté trouvé.</p>
+                    {% endif %}
+                </div>
+            </section>
+            <section>
+                <div class="container">
+                    <h3>Changement de mode réseau</h3>
+                    <p>Le raspberry ce connectera au premier réseau disponible</p>
+                    <form action="/set_wifi_mode">
+                        <button type="submit" id="wifiButton">Passer en mode Wi-Fi</button>
+                    </form>
+                </div>
+            </section>
+            <section>
+                <div id="modeMessage" class="container" style="display: none;"></div>
+            </section>
+            <section>
+                <div class="container">
+                    <h3>Ajouter un Wi-Fi</h3>
+                    <p> Cela va connecter le raspberry pi au nouveau réseau wifi associé</p>
+                    <form action="/configurer_wifi" method="POST">
+                        <label for="wifi">Sélectionner un réseau Wi-Fi :</label>
+                        <select id="wifi" name="wifi" required>
+                            {% for wifi in wifi_proxi %}
+                                <option value="{{ wifi }}">{{ wifi }}</option>
+                            {% else %}
+                                <option disabled>Aucun Wi-Fi disponible</option>
+                            {% endfor %}
+                        </select>
+                        <label for="password">Mot de passe :</label>
+                        <input type="password" id="password" name="password" required><br><br>
+                        <button type="submit" id="config_wifi">Configurer</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+        <div id="loader">
+            <div class="spinner"></div>
+        </div>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
+</html>

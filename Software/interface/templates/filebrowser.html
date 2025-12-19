@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Filebrowser</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
+        <nav>
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Accueil</a></li>
+                <li><a href="/mode" class="nav-link">Mode de connexion</a></li>
+                <li><a href="/config_app" class="nav-link">Configurations</a></li>
+                <li><a href="/new_session" class="nav-link">Création de session</a></li>
+                <li><a href="/liste_session" class="nav-link">Liste sessions</a></li>
+                <li><a href="/date" class="nav-link">Date</a></li>
+                <li  class="active"><a href="/filebrowser" class="nav-link">Drive</a></li>
+                <li><a href="/espace_disk" class="nav-link">Stockage</a></li>
+                <li><a href="/video" class="nav-link">Video</a></li>
+            </ul>
+        </nav>
+        <main>
+            <section>
+                <div class="container">
+                    <h1>Filebrowser</h1>
+                    <div class="divFilebrowser">
+                        <div>
+                            <p>Filebrowser est une application web qui vous permet de gérer vos fichiers sur votre serveur. Vous pouvez télécharger, supprimer et organiser vos fichiers directement depuis votre navigateur.</p>
+                        </div>
+                        <div class="divBtns">
+                            <button id="filebrowserStart">Démarrer Filebrowser</button>
+                            <button id="filebrowserOpen">Ouvrir Filebrowser dans un autre onglet</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div id="filebrowserMessage" class="container" style="display: none;"></div>
+            </section>
+        </main>
+        <div id="loader">
+            <div class="spinner"></div>
+        </div>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Configuration app</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
+        <nav>
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Accueil</a></li>
+                <li><a href="/mode" class="nav-link">Mode de connexion</a></li>
+                <li class="active"><a href="/config_app" class="nav-link">Configurations</a></li>
+                <li><a href="/new_session" class="nav-link">Création de session</a></li>
+                <li><a href="/liste_session" class="nav-link">Liste sessions</a></li>
+                <li><a href="/date" class="nav-link">Date</a></li>
+                <li><a href="/filebrowser" class="nav-link">Drive</a></li>
+                <li><a href="/espace_disk" class="nav-link">Stockage</a></li>
+                <li><a href="/video" class="nav-link">Video</a></li>
+            </ul>
+        </nav>
+        <main>
+            <section>
+                <div class="container">
+                    {% if message %}
+                        <div class="message {% if 'Erreur' in message %}error{% else %}success{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                    <form action="save_config" class="appForm" method="post">
+                        <div class="section">
+                            <h2>Général</h2>
+                            <div class="divApp">
+                                <label for="nom">Nom</label> 
+                                <input type="text" id="nom" name="nom" placeholder="Entrez un nom" value="{{ config.get('nom', '') }}">
+                            </div>
+                        </div>
+                        <div class="section">
+                            <h2>Caméra</h2>
+                            <div class="form-row">
+                                <div class="col">
+                                    <label for="gain">Gain (0 à 16)</label> 
+                                    <input type="number" id="gain" name="gain" min="0" max="16" step="1" placeholder="0-16" value="{{ config.get('gain', '') }}">
+                                </div>
+                                <div class="col">
+                                    <label for="exposure">Exposure</label> 
+                                    <select id="exposure" name="exposure">
+                                        <option value="0" {% if config.get('exposure') == 0 %}selected{% endif %}>Auto</option>
+                                        <option value="1" {% if config.get('exposure') == 1 %}selected{% endif %}>Night</option>
+                                        <option value="2" {% if config.get('exposure') == 2 %}selected{% endif %}>Backlight</option>
+                                        <option value="3" {% if config.get('exposure') == 3 %}selected{% endif %}>Spotlight</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="hdr">HDR</label> 
+                                    <select id="hdr" name="hdr">
+                                        <option value="0" {% if config.get('hdr') == 0 %}selected{% endif %}>Off</option>
+                                        <option value="1" {% if config.get('hdr') == 1 %}selected{% endif %}>Low</option>
+                                        <option value="2" {% if config.get('hdr') == 2 %}selected{% endif %}>Medium</option>
+                                        <option value="3" {% if config.get('hdr') == 3 %}selected{% endif %}>High</option>
+                                        <option value="4" {% if config.get('hdr') == 4 %}selected{% endif %}>Auto</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col">
+                                    <label for="brightness">Brightness (-1 à 1)</label> 
+                                    <input type="number" id="brightness" name="brightness" min="-1" max="1" step="0.01" placeholder="-1 à 1" value="{{ config.get('brightness', '') }}">
+                                </div>
+                                <div class="col">
+                                    <label for="contrast">Contrast (0 à 32)</label> 
+                                    <input type="number" id="contrast" name="contrast" min="0" max="32" step="1" placeholder="0 à 32" value="{{ config.get('contrast', '') }}">
+                                </div>
+                                <div class="col">
+                                    <label for="saturation">Saturation (0 à 32)</label> 
+                                    <input type="number" id="saturation" name="saturation" min="0" max="32" step="1" placeholder="0 à 32" value="{{ config.get('saturation', '') }}">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col">
+                                    <label for="autofocus-mode">Autofocus Mode</label> 
+                                    <select id="autofocus-mode" name="autofocus-mode">
+                                        <option value="0" {% if config.get('autofocus-mode') == 0 %}selected{% endif %}>Auto</option>
+                                        <option value="1" {% if config.get('autofocus-mode') == 1 %}selected{% endif %}>Continuous</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="autofocus-range">Autofocus Range</label> 
+                                    <select id="autofocus-range" name="autofocus-range">
+                                        <option value="0" {% if config.get('autofocus-range') == 0 %}selected{% endif %}>Normal</option>
+                                        <option value="1" {% if config.get('autofocus-range') == 1 %}selected{% endif %}>Macro</option>
+                                        <option value="2" {% if config.get('autofocus-range') == 2 %}selected{% endif %}>Full</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="autofocus-speed">Autofocus Speed</label> 
+                                    <select id="autofocus-speed" name="autofocus-speed">
+                                        <option value="0" {% if config.get('autofocus-speed') == 0 %}selected{% endif %}>Normal</option>
+                                        <option value="1" {% if config.get('autofocus-speed') == 1 %}selected{% endif %}>Fast</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <h2>Capteurs Luminosité</h2>
+                            <p>Les niveaux de luminosité sont exprimés par des valeurs comprises entre 0 et 3. Une valeur proche de 0 correspond à une forte luminosité, tandis qu'une valeur proche de 3 indique une faible luminosité.</p>
+                            <p>Ces valeurs déterminent le passage entre le mode jour et le mode nuit, en tenant compte de la luminosité ambiante (hystérésis).</p>
+                            <div class="form-row">
+                                <div class="col">
+                                    <label for="th-jour">Luminosité Jour</label> 
+                                    <input type="number" id="th-jour" name="th-jour" min="0" max="1" step="0.5" value="{{ config.get('th-jour', '') }}">
+                                </div>
+                                <div class="col">
+                                    <label for="th-nuit">Luminosité Nuit</label> 
+                                    <input type="number" id="th-nuit" name="th-nuit" min="0" max="10" step="0.5" value="{{ config.get('th-nuit', '') }}">
+                                </div>
+                            </div>                            
+                        </div>
+                        <div class="section">
+                            <h2>Paramètres Photo</h2>
+                            <div class="divApp">
+                                <label for="motion-detect-threshold">Seuil de détection de mouvement</label> 
+                                <input type="number" id="motion-detect-threshold" name="motion-detect-threshold" min="0" max="100" step="1" placeholder="0-100" value="{{ config.get('motion-detect-threshold', '') }}">
+                            </div>
+                            <div class="divApp">
+                                <label for="mov-area">Zone de détection de mouvement</label> 
+                                <input type="text" id="mov-area" name="mov-area" placeholder="Ex: 500" value="{{ config.get('mov-area', '') }}">
+                            </div>
+                            <div class="divApp">
+                                <label for="vib-threshold">Seuil de vibration</label> 
+                                <input type="number" id="vib-threshold" name="vib-threshold" min="0" max="20000" step="1" placeholder="0-20000" value="{{ config.get('vib-threshold', '') }}">
+                            </div>
+                            <div class="divApp">
+                                <label for="hq-iteration">Nombre d'itérations pour la photo HQ</label> 
+                                <input type="number" id="hq-iteration" name="hq-iteration" min="1" max="20" step="1" placeholder="1-20" value="{{ config.get('hq-iteration', '') }}">
+                            </div>
+                            <div class="divApp">
+                                <label for="interval">Intervalle entre les photos (Seconde)</label>
+                                <input type="number" id="interval" name="interval" min="0.5" max="60" step="0.5" placeholder="0.5-60" value="{{ config.get('interval', '') }}">
+                            </div>
+                        </div>                        
+                        <div>
+                            <button type="submit">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+        <div id="loader">
+            <div class="spinner"></div>
+        </div>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
+</html>

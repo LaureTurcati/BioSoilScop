@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Liste Session</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
+        <nav>
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Accueil</a></li>
+                <li><a href="/mode" class="nav-link">Mode de connexion</a></li>
+                <li><a href="/config_app" class="nav-link">Configurations</a></li>
+                <li><a href="/new_session" class="nav-link">Création de session</a></li>
+                <li class="active"><a href="/liste_session" class="nav-link">Liste sessions</a></li>
+                <li><a href="/date" class="nav-link">Date</a></li>
+                <li><a href="/filebrowser" class="nav-link">Drive</a></li>
+                <li><a href="/espace_disk" class="nav-link">Stockage</a></li>
+                <li><a href="/video" class="nav-link">Video</a></li>
+            </ul>
+        </nav>
+        <main>
+            <section>
+                <div class="container">
+                    <h1>Sessions</h1>
+                    <div id="toast-container" style="position: fixed; top: 35px; right: 20px; z-index: 9999;"></div>
+                    {% if message %}
+                        <div class="message {% if 'Erreur' in message %}error{% else %}success{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    {% for category, message in messages %}
+                                        showToast('{{ message | e }}', '{{ category | e }}', 4000);
+                                    {% endfor %}
+                                });
+                            </script>
+                        {% endif %}
+                    {% endwith %}
+                    <table id="fileTable">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th>Latitude</th>
+                                <th>Longitude</th>
+                                <th>Choix</th>
+                                <th>Dates</th>
+                                <th>Créneaux</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if files|length > 0 %}
+                                {% for file in files %}
+                                    <tr class="{% if file.data.status == 'start' %}highlight{% endif %}">
+                                        <td>
+                                            {{ file.data.nom_session if file.data.nom_session else '--' }}
+                                        </td>
+                                        <td>
+                                            {{ file.data.description_session if file.data.description_session else '--' }}
+                                        </td>
+                                        <td>
+                                            {{ file.data.latitude if file.data.latitude else '--' }}
+                                        </td>
+                                        <td>
+                                            {{ file.data.longitude if file.data.longitude else '--' }}
+                                        </td>
+                                        <td>
+                                            {{ file.data.choix if file.data.choix else '--' }}
+                                        </td>
+                                        <td>
+                                            {% if file.data.date_debut and file.data.date_fin %}
+                                                {{ file.data.date_debut }} - {{ file.data.date_fin }}
+                                            {% else %}
+                                                --
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if file.data.time_slots %}
+                                                {% for slot in file.data.time_slots %}
+                                                    {{ slot.time_debut }} - {{ slot.time_fin }} <br>
+                                                {% endfor %}
+                                            {% else %}
+                                                --
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="divAction">
+                                                {% if file.data.status == 'stop' %}
+                                                    <form class="start-form" action="/start_session/{{ file.data.nom_session }}" method="POST" >
+                                                        <button type="button" id="openDialogBtn">
+                                                            <img src="static/img/start.png" class="icon" alt="Démarrer">
+                                                        </button>
+                                                    </form>
+                                                    <dialog id="confirmDateDialog">
+                                                        <div class="dialog-header">
+                                                            <h3>Confirmer la date du Raspberry Pi</h3>
+                                                            <img src="static/img/close.png" class="icon_24 close-icon" id="closeDialogBtn" alt="Fermer">
+                                                        </div>
+
+                                                        <div class="dialog-body">
+                                                            <span class="dialog-date" id="currentDate">{{ date }}</span>
+                                                        </div>
+
+                                                        <div class="dialog-footer">
+                                                            <button id="confirmStartSession" class="btn-confirm">Confirmer</button>
+                                                            <button id="redirectToDate" class="btn-cancel">Changer la date</button>
+                                                        </div>
+                                                    </dialog>
+                                                {% else %}
+                                                    <form action="/stop_session/{{ file.data.nom_session }}" method="POST" class="stop-form">
+                                                        <button type="submit" data-status="{{ file.data.status }}">
+                                                            <img src="static/img/stop.png" class="icon" alt="Arrêter">
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                                <button class="delete_btn" data-file="{{file.path}}"><img src="static/img/delete.png" class="icon" alt="Supprimer"></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                {% else %}
+                                <tr><td colspan="8">Aucune session disponible.</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+        <div id="loader">
+            <div class="spinner"></div>
+        </div>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
+</html>

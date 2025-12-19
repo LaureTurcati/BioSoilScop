@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace du disque</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+    <body>
+        <nav>
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Accueil</a></li>
+                <li><a href="/mode" class="nav-link">Mode de connexion</a></li>
+                <li><a href="/config_app" class="nav-link">Configurations</a></li>
+                <li><a href="/new_session" class="nav-link">Création de session</a></li>
+                <li><a href="/liste_session" class="nav-link">Liste sessions</a></li>
+                <li><a href="/date" class="nav-link">Date</a></li>
+                <li><a href="/filebrowser" class="nav-link">Drive</a></li>
+                <li class="active"><a href="/espace_disk" class="nav-link">Stockage</a></li>
+                <li><a href="/video" class="nav-link">Video</a></li>
+            </ul>
+        </nav>
+        <main>
+            <section>
+                <div class="container">
+                    <h1>Espace de stockage</h1>
+
+                    <canvas id="diskUsageCanvas" width="300" height="300" data-percentage-free="{{ percentage_free | round(2) | tojson }}"></canvas>
+                </div>
+            </section>
+        </main>
+        <script src="{{ url_for('static', filename='js/disk.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
+</html>

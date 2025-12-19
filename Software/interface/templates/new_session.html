@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Configuration de l'application</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
+        <nav>
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Accueil</a></li>
+                <li><a href="/mode" class="nav-link">Mode de connexion</a></li>
+                <li><a href="/config_app" class="nav-link">Configurations</a></li>
+                <li class="active"><a href="/new_session" class="nav-link">Création de session</a></li>
+                <li><a href="/liste_session" class="nav-link">Liste sessions</a></li>
+                <li><a href="/date" class="nav-link">Date</a></li>
+                <li><a href="/filebrowser" class="nav-link">Drive</a></li>
+                <li><a href="/espace_disk" class="nav-link">Stockage</a></li>
+                <li><a href="/video" class="nav-link">Video</a></li>
+            </ul>
+        </nav>
+        <main>
+            <section>
+                <div class="container">
+                    {% if message %}
+                        <div class="message {% if 'Erreur' in message %}error{% else %}success{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                    <form action="save_session" class="appForm" method="post">
+                        <div class="section">
+                            <h2>Description du site</h2>
+                            <div class="form-row-session">
+                                <div class="col">
+                                    <label for="nom_site">Nom du site</label> 
+                                    <input type="text" id="nom_site" name="nom_site" required>
+                                </div>
+                                <div class="col">
+                                    <label for="taille_site">Taille du site (m²)</label>
+                                    <input type="number" id="taille_site" name="taille_site" required>
+                                </div>
+                            </div>
+                            {% if mode == "AP" %}
+                                <div class="divApp apSession">
+                                    <label for="formatSelect">Format de coordonnées :</label>
+                                    <select id="formatSelect">
+                                        <option value="dd">Degrés Décimaux (DD)</option>
+                                        <option value="dms">Degrés, Minutes, Secondes (DMS)</option>
+                                        <option value="dmm">Degrés, Minutes Décimales (DMM)</option>
+                                    </select>
+                                    <div id="coordinateInputs" class="row"></div>
+                                </div>
+                            {% else %}
+                            <div class="divApp divMap">
+                                <div id="map"></div>
+                                <div class="coordinates-input">
+                                    <label for="formatSelect">Format de coordonnées :</label>
+                                    <select id="formatSelect">
+                                        <option value="dd">Degrés Décimaux (DD)</option>
+                                        <option value="dms">Degrés, Minutes, Secondes (DMS)</option>
+                                        <option value="dmm">Degrés, Minutes Décimales (DMM)</option>
+                                    </select>
+                                    <div id="coordinateInputs" class="row">
+                                    </div>
+                                    <input type="button" id="setMarker" value="Définir Marqueur"></input>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="form-row-session">
+                                <div class="col">
+                                    <h4>Type de site :</h4>
+                                    <div class="row">
+                                        <label for="type_site_jardin_individuel_privatif">Jardin individuel privatif</label>
+                                        <input type="radio" id="type_site_jardin_individuel_privatif" name="type_site" value="jardin_individuel_privatif">
+                                    </div>
+                                    <div class="row">
+                                        <label for="type_site_jardin_partage_ouvrier">Jardin partagé ou ouvrier</label>
+                                        <input type="radio" id="type_site_jardin_partage_ouvrier" name="type_site" value="jardin_partage_ouvrier">
+                                    </div>
+                                    <div class="row">
+                                        <label for="type_site_parc_ou_square">Parc ou square (public)</label>
+                                        <input type="radio" id="type_site_parc_ou_square" name="type_site" value="parc_ou_square">
+                                    </div>
+                                    <div class="row">
+                                        <label for="type_site_espace_vert_entreprise_ecole_campus">Espace vert d'entreprise, d'école ou de campus</label>
+                                        <input type="radio" id="type_site_espace_vert_entreprise_ecole_campus" name="type_site" value="espace_vert_entreprise_ecole_campus">
+                                    </div>
+                                    <div class="row">
+                                        <label for="type_site_bord_route_chemin">Bord de route ou de chemin</label>
+                                        <input type="radio" id="type_site_bord_route_chemin" name="type_site" value="bord_route_chemin">
+                                    </div>
+                                    <div class="row">
+                                        <label for="type_site_site_activite_maraichere">Site d'activité maraîchère</label>
+                                        <input type="radio" id="type_site_site_activite_maraichere" name="type_site" value="site_activite_maraichere">
+                                    </div>
+                                    <div class="row">
+                                        <label for="type_site_autre">Autre</label>
+                                        <input type="radio" id="type_site_autre" name="type_site" value="autre">
+                                    </div>
+                                    <div class="col" id="autre_type_container" style="display: none;">
+                                        <label for="autre">Si autre,</label>
+                                        <textarea id="autre" name="autre"></textarea>                                
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <h4>Composition du site :</h4>
+                                    <div class="row">
+                                        <label for="composition_site_pelouse_tondue">Pelouse tondue</label>
+                                        <input type="radio" id="composition_site_pelouse_tondue" name="composition_site" value="pelouse_tondue">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_prairie">Prairie</label>
+                                        <input type="radio" id="composition_site_prairie" name="composition_site" value="prairie">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_espace_boise">Espace boisé</label>
+                                        <input type="radio" id="composition_site_espace_boise" name="composition_site" value="espace_boise">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_verger">Verger</label>
+                                        <input type="radio" id="composition_site_verger" name="composition_site" value="verger">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_massif_ornemental">Massif ornemental (fleuri, arbustif)</label>
+                                        <input type="radio" id="composition_site_massif_ornemental" name="composition_site" value="massif_ornemental">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_haie">Haie</label>
+                                        <input type="radio" id="composition_site_haie" name="composition_site" value="haie">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_potager">Potager</label>
+                                        <input type="radio" id="composition_site_potager" name="composition_site" value="potager">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_cours_eau_plan_eau">Cours d’eau ou plan d’eau</label>
+                                        <input type="radio" id="composition_site_cours_eau_plan_eau" name="composition_site" value="cours_eau_plan_eau">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_espace_peu_pas_entretenu">Espace peu ou pas entretenu (friche, espace naturel)</label>
+                                        <input type="radio" id="composition_site_espace_peu_pas_entretenu" name="composition_site" value="espace_peu_pas_entretenu">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_zone_orties">Zone avec des orties</label>
+                                        <input type="radio" id="composition_site_zone_orties" name="composition_site" value="zone_orties">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_zone_ronces">Zone avec des ronces</label>
+                                        <input type="radio" id="composition_site_zone_ronces" name="composition_site" value="zone_ronces">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_compost_tas_bac">Compost en tas ou en bac</label>
+                                        <input type="radio" id="composition_site_compost_tas_bac" name="composition_site" value="compost_tas_bac">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_souche_arbre">Souche(s) d’arbre(s)</label>
+                                        <input type="radio" id="composition_site_souche_arbre" name="composition_site" value="souche_arbre">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_tas_bois_branches">Tas de bois ou branches</label>
+                                        <input type="radio" id="composition_site_tas_bois_branches" name="composition_site" value="tas_bois_branches">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_tas_cailloux_muret_pierre">Tas de cailloux ou muret en pierre</label>
+                                        <input type="radio" id="composition_site_tas_cailloux_muret_pierre" name="composition_site" value="tas_cailloux_muret_pierre">
+                                    </div>
+                                    <div class="row">
+                                        <label for="composition_site_autre">Autre</label>
+                                        <input type="radio" id="composition_site_autre" name="composition_site" value="autre">
+                                    </div>
+                                    <div class="col" id="autre_composition_container" style="display: none;">
+                                        <label for="autre">Si autre,</label>
+                                        <textarea id="autre" name="autre"></textarea>                                
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row-session">
+                                <div class="col">
+                                    <h4>Utilisation de produits phytosanitaires sur l’année passée :</h4>
+                                    <div class="row">
+                                        <label for="phytosanitaire_je_ne_sais_pas">Je ne sais pas</label>
+                                        <input type="radio" id="phytosanitaire_je_ne_sais_pas" name="phytosanitaire_unique" value="je_ne_sais_pas" class="unique">
+                                    </div>
+                                    <div class="row">
+                                        <label for="phytosanitaire_herbicide_desherbant">Herbicide/désherbant</label>
+                                        <input type="checkbox" id="phytosanitaire_herbicide_desherbant" name="phytosanitaire_multiple" value="herbicide_desherbant" class="multiple">
+                                    </div>
+                                    <div class="row">
+                                        <label for="phytosanitaire_granule_anti_limace">Granulé anti-limace</label>
+                                        <input type="checkbox" id="phytosanitaire_granule_anti_limace" name="phytosanitaire_multiple" value="granule_anti_limace" class="multiple">
+                                    </div>
+                                    <div class="row">
+                                        <label for="phytosanitaire_insecticide">Insecticide</label>
+                                        <input type="checkbox" id="phytosanitaire_insecticide" name="phytosanitaire_multiple" value="insecticide" class="multiple">
+                                    </div>
+                                    <div class="row">
+                                        <label for="phytosanitaire_fongicide">Fongicide</label>
+                                        <input type="checkbox" id="phytosanitaire_fongicide" name="phytosanitaire_multiple" value="fongicide" class="multiple">
+                                    </div>
+                                    <div class="row">
+                                        <label for="phytosanitaire_bouillie_bordelaise">Bouillie bordelaise</label>
+                                        <input type="checkbox" id="phytosanitaire_bouillie_bordelaise" name="phytosanitaire_multiple" value="bouillie_bordelaise" class="multiple">
+                                    </div>
+                                    <div class="row">
+                                        <label for="phytosanitaire_aucun">Aucun</label>
+                                        <input type="radio" id="phytosanitaire_aucun" name="phytosanitaire_unique" value="aucun" class="unique">
+                                    </div>
+                                </div>  
+                                <div class="col">
+                                    <h4>Autre techniques d'entretien du site l'année passée :</h4>
+                                    <div class="row">
+                                        <label for="entretien_je_ne_sais_pas">Je ne sais pas</label>
+                                        <input type="radio" id="entretien_je_ne_sais_pas" name="entretien_unique" value="je_ne_sais_pas" class="unique">
+                                    </div>
+                                    <div class="row">
+                                        <label for="entretien_engrais_organique">Engrais organique (compost, fumier)</label>
+                                        <input type="checkbox" id="entretien_engrais_organique" name="entretien_multiple" value="engrais_organique" class="multiple">
+                                    </div>
+                                    <div class="row">
+                                        <label for="entretien_engrais_chimique">Engrais chimique / de synthèse</label>
+                                        <input type="checkbox" id="entretien_engrais_chimique" name="entretien_multiple" value="engrais_chimique" class="multiple">
+                                    </div>
+                                    <div class="row">
+                                        <label for="entretien_paturage">Pâturage</label>
+                                        <input type="checkbox" id="entretien_paturage" name="entretien_multiple" value="paturage" class="multiple">
+                                    </div>
+                                    <div class="row">
+                                        <label for="entretien_travail_superficiel">Travail superficiel du sol (aération sans retournement)</label>
+                                        <input type="checkbox" id="entretien_travail_superficiel" name="entretien_multiple" value="travail_superficiel" class="multiple">
+                                    </div>
+                                    <div class="row">
+                                        <label for="entretien_travail_profond">Travail profond du sol (avec retournement)</label>
+                                        <input type="checkbox" id="entretien_travail_profond" name="entretien_multiple" value="travail_profond" class="multiple">
+                                    </div>
+                                    <div class="row">
+                                        <label for="entretien_fauche_tonte_tardive">Fauche ou tonte tardive</label>
+                                        <input type="checkbox" id="entretien_fauche_tonte_tardive" name="entretien_multiple" value="fauche_tonte_tardive" class="multiple">
+                                    </div>
+                                    <div class="row">
+                                        <label for="entretien_aucune_pratique">Aucune des pratiques</label>
+                                        <input type="radio" id="entretien_aucune_pratique" name="entretien_unique" value="aucune_pratique" class="unique">
+                                    </div>
+                                    <div class="row">
+                                        <label for="entretien_autre">Autre</label>
+                                        <input type="checkbox" id="entretien_autre" name="entretien_unique" value="autre" class="unique">
+                                    </div>
+                                    <div class="col" id="autre_entretien_container" style="display: none;">
+                                        <label for="autre">Si autre,</label>
+                                        <textarea id="autre" name="autre"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row-session">
+                                <div class="col">
+                                    <h4>Arrosage :</h4>
+                                    <div class="row">
+                                        <label for="arrosage_je_ne_sais_pas">Je ne sais pas</label>
+                                        <input type="radio" id="arrosage_je_ne_sais_pas" name="arrosage" value="je_ne_sais_pas">
+                                    </div>
+                                    <div class="row">
+                                        <label for="arrosage_pas_arrosage">Pas d'arrosage</label>
+                                        <input type="radio" id="arrosage_pas_arrosage" name="arrosage" value="pas_arrosage">
+                                    </div>
+                                    <div class="row">
+                                        <label for="manuel">Manuel</label>
+                                        <input type="radio" id="arrosage_manuel" name="arrosage" value="manuel">
+                                    </div>
+                                    <div class="row">
+                                        <label for="autonome">Autonome</label>
+                                        <input type="radio" id="arrosage_autonome" name="arrosage" value="autonome">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <h2>Contexte de l'observation</h2>
+                            <div class="divApp">
+                                <label for="nom_session">Session</label> 
+                                <input type="text" id="nom_session" name="nom_session" required>
+                            </div>
+                            <div class="divApp">
+                                <label for="description_session">Description</label>
+                                <textarea id="description_session" name="description_session"></textarea>
+                            </div>
+                            <div class="divApp">
+                                <h4>Horaire :</h4>
+                                <label for="choix1">Continue</label>
+                                <input type="radio" id="choix1" name="choix" value="continue" checked onclick="handleChoice()">
+                                <label for="choix2">Plage</label>
+                                <input type="radio" id="choix2" name="choix" value="plage" onclick="handleChoice()">
+                            </div>
+                            <div id="plage">
+                                <div class="dateWrapper">
+                                    <input type="date" name="date_debut" disabled> 
+                                    <input type="date" name="date_fin" disabled>
+                                    <img src="static/img/plus_fonce.png" alt="Ajout d'une plage horaire" style="visibility: hidden;"/>
+                                    <img src="static/img/moins_fonce.png" alt="Suppression d'une plage horaire" style="visibility: hidden;"/>
+                                </div>
+                                <div id="hours">
+                                    <div class="timeWrapper">
+                                        <input type="time" name="time_debut_0" id="time_debut_0" disabled> 
+                                        <input type="time" name="time_fin_0" id="time_fin_0" disabled>
+                                        <img src="static/img/plus_fonce.png" alt="Ajout d'une plage horaire" onclick="ajouterLigne(1)"/>
+                                        <img src="static/img/moins_fonce.png" alt="Suppression d'une plage horaire" style="visibility: hidden;"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row-session">
+                                <div class="col">
+                                    <h4>Exposition de l'installation :</h4>
+                                    <div class="row">
+                                        <label for="pleine_exposition">Pleine exposition</label>
+                                        <input type="radio" id="pleine_exposition" name="exposition" value="pleine_exposition">
+                                    </div>
+                                    <div class="row">
+                                        <label for="ombrage_bati">Ombragé par du bâti</label>
+                                        <input type="radio" id="ombrage_bati" name="exposition" value="ombrage_bati">
+                                    </div>
+                                    <div class="row">
+                                        <label for="ombrage_vegetation">Ombragé par de la végétation</label>
+                                        <input type="radio" id="ombrage_vegetation" name="exposition" value="ombrage_vegetation">
+                                    </div>
+                                    </div>
+                                <div class="col">
+                                    <h4>Type de végétation dans un rayon de 2 mètres :</h4>
+                                    <div class="row">
+                                        <label for="vegetation_gazon_seme">Gazon semé</label>
+                                        <input type="radio" id="vegetation_gazon_seme" name="vegetation" value="gazon_seme">
+                                    </div>
+                                    <div class="row">
+                                        <label for="vegetation_herbacees_rases_moins">Herbacées rases (<20cm)</label>
+                                        <input type="radio" id="vegetation_herbacees_rases_moins" name="vegetation" value="herbacees_rases_moins">
+                                    </div>
+                                    <div class="row">
+                                        <label for="vegetation_herbacees-rases_plus">Herbacées rases (>20cm)</label>
+                                        <input type="radio" id="vegetation_herbacees-rases_plus" name="vegetation" value="herbacees-rases_plus">
+                                    </div>
+                                    <div class="row">
+                                        <label for="vegetation_arbre_feuillage_caduque">Arbre(s) à feuillage caduque</label>
+                                        <input type="radio" id="vegetation_arbre_feuillage_caduque" name="vegetation" value="arbre_feuillage_caduque">
+                                    </div>
+                                    <div class="row">
+                                        <label for="vegetation_arbre_feuillage_persistant">Arbre(s) à feuillage persistant</label>
+                                        <input type="radio" id="vegetation_arbre_feuillage_persistant" name="vegetation" value="arbre_feuillage_persistant">
+                                    </div>
+                                    <div class="row">
+                                        <label for="vegetation_arbuste">Arbuste(s)</label>
+                                        <input type="radio" id="vegetation_arbuste" name="vegetation" value="arbuste">
+                                    </div>
+                                    <div class="row">
+                                        <label for="vegetation_plantes_potageres">Plantes potagères</label>
+                                        <input type="radio" id="vegetation_plantes_potageres" name="vegetation" value="plantes_potageres">
+                                    </div>
+                                    <div class="row">
+                                        <label for="vegetation_plantes_ornements">Plantes d’ornements</label>
+                                        <input type="radio" id="vegetation_plantes_ornements" name="vegetation" value="plantes_ornements">
+                                    </div>
+                                    <div class="row">
+                                        <label for="vegetation_autre">Autre</label>
+                                        <input type="radio" id="vegetation_autre" name="vegetation" value="autre">
+                                    </div>
+                                    <div class="col" id="autre_vegetation_container" style="display: none;">
+                                        <label for="autre">Si autre,</label>
+                                        <textarea id="autre" name="autre"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row-session">
+                                <div class="col">
+                                    <h4>Précisez la couverture du sol sous le capteur :</h4>
+                                    <div class="row">
+                                        <label for="couverture_sol_nu">Sol nu</label>
+                                        <input type="radio" id="sol_nu" name="_autre" value="sol_nu">
+                                    </div>
+                                    <div class="row">
+                                        <label for="couverture_sol_plantes">Plantes</label>
+                                        <input type="radio" id="couverture_sol_plantes" name="couverture_sol" value="plantes">
+                                    </div>
+                                    <div class="row">
+                                        <label for="couverture_sol_residus_vegetaux">Résidus végétaux</label>
+                                        <input type="radio" id="couverture_sol_residus_vegetaux" name="couverture_sol" value="residus_vegetaux">
+                                    </div>
+                                    <div class="row">
+                                        <label for="couverture_sol_autre">Autre</label>
+                                        <input type="radio" id="couverture_sol_autre" name="couverture_sol" value="autre">
+                                    </div>
+                                    <div class="col" id="autre_couverture_container" style="display: none;">
+                                        <label for="autre">Si autre,</label>
+                                        <textarea id="autre" name="autre"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <h4>Si résidus végétaux, quel est le type de résidus à la surface ?</h4>
+                                    <div class="row">
+                                        <label for="residus_vegetaux_feuilles_arbres_arbustes">Feuilles d’arbres ou arbustes</label>
+                                        <input type="radio" id="residus_vegetaux_feuilles_arbres_arbustes" name="residus_vegetaux" value="feuilles_arbres_arbustes">
+                                    </div>
+                                    <div class="row">
+                                        <label for="residus_vegetaux_aiguilles_coniferes_resineux">Aiguilles de conifères/résineux</label>
+                                        <input type="radio" id="residus_vegetaux_aiguilles_coniferes_resineux" name="residus_vegetaux" value="aiguilles_coniferes_resineux">
+                                    </div>
+                                    <div class="row">
+                                        <label for="residus_vegetaux_bois_mort">Bois mort</label>
+                                        <input type="radio" id="residus_vegetaux_bois_mort" name="residus_vegetaux" value="bois_mort">
+                                    </div>
+                                    <div class="row">
+                                        <label for="residus_vegetaux_debris_vegetaux_recycles">Débris végétaux recyclés (paille, résidu de tonte…)</label>
+                                        <input type="radio" id="residus_vegetaux_debris_vegetaux_recycles" name="residus_vegetaux" value="debris_vegetaux_recycles">
+                                    </div>
+                                    <div class="row">
+                                        <label for="residus_vegetaux_debris_vegetaux_manufactures">Débris végétaux manufacturés (fibre de bois, broyats de bois…)</label>
+                                        <input type="radio" id="residus_vegetaux_debris_vegetaux_manufactures" name="residus_vegetaux"   value="debris_vegetaux_manufactures">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row-session">
+                                <div class="col">
+                                    <h4>L’installation est située au sein d’une zone cultivée :</h4>
+                                    <div class="row">
+                                        <label for="zone_cultivee_oui">Oui</label>
+                                        <input type="radio" id="zone_cultivee_oui" name="zone_cultivee" value="oui">
+                                    </div>
+                                    <div class="row">
+                                        <label for="zone_cultivee_non">Non</label>
+                                        <input type="radio" id="zone_cultivee_non" name="zone_cultivee" value="non">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="divApp">
+                            <button type="submit">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+        <div id="loader">
+            <div class="spinner"></div>
+        </div>
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script src="{{ url_for('static', filename='js/map_picker.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
+</html>

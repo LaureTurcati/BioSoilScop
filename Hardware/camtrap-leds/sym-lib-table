@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "camtrap-leds")(type "KiCad")(uri "${KIPRJMOD}/camtrap-leds.kicad_sym")(options "")(descr ""))
+)

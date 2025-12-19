@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Création de session</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
+        <nav>
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">Accueil</a></li>
+                <li><a href="/mode" class="nav-link">Mode de connexion</a></li>
+                <li><a href="/config_app" class="nav-link">Configurations</a></li>
+                <li><a href="/new_session" class="nav-link">Création de session</a></li>
+                <li><a href="/liste_session" class="nav-link">Liste sessions</a></li>
+                <li class="active"><a href="/date" class="nav-link">Date</a></li>
+                <li><a href="/filebrowser" class="nav-link">Drive</a></li>
+                <li><a href="/espace_disk" class="nav-link">Stockage</a></li>
+                <li><a href="/video" class="nav-link">Video</a></li>
+
+            </ul>
+        </nav>
+        <main>
+            <section>
+                <div class="display-date">
+                    <span>
+                        {{date}}
+                    </span>
+                </div>
+            </section>
+            <section>
+                <div class="container">
+                    <h1>Modification de la date</h1>
+                    {% if message %}
+                        <div class="message {% if 'Erreur' in message %}error{% else %}success{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                    <form action="/config_date" class="dateForm" method="POST">
+                        <div class="dateDiv" >
+                            <label for="date">Date</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                        <div class="dateDiv">
+                            <label for="hour">Heure</label>
+                            <input type="time" step="2" id="hour" name="hour" required>
+                        </div>
+                        <div class="dateDiv">
+                            <button type="submit">Configurer</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+        <div id="loader">
+            <div class="spinner"></div>
+        </div>
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
+</html>
