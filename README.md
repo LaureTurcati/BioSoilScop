@@ -22,10 +22,11 @@ Here are some images taken during a laboratory test session.
 <ins>Speed detection representation</ins>
 
 ## Construction
-browse the hardware folder to construct your VYCTOR
+Browse the hardware folder to construct your VYCTOR
 
 ## Documentation
 Recover the documentation user and developpement in the Folder Software
 
 ## Credit
-ANR BISES
+This project was funded by the French national research agency (ANR) BISES ANR-19-CE 32-0012, the OSU OREME and the OSU Ecce Terra 
+
